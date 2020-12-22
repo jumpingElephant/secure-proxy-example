@@ -1,0 +1,55 @@
+version: '3.2'
+
+services:
+  keycloak:
+    hostname: keycloak
+    image: jboss/keycloak:5.0.0
+    command: [ "-Dkeycloak.migration.action=import", "-Dkeycloak.migration.file=/opt/config/jaeger-realm.json", "-Dkeycloak.migration.provider=singleFile", "-Dkeycloak.migration.strategy=OVERWRITE_EXISTING" ]
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: password
+    #      PROXY_ADDRESS_FORWARDING: "true"
+    #      KEYCLOAK_IMPORT: /opt/config/realm-export.json
+    ports:
+      - 8080:8080
+      - 8443:8443
+    volumes:
+      - type: bind
+        source: ./jaeger-realm.json
+        target: /opt/config/jaeger-realm.json
+        volume:
+          nocopy: true
+
+  gatekeeper:
+    hostname: proxy
+    image: keycloak/keycloak-gatekeeper:5.0.0
+    command: [ "--config", "/opt/config/gatekeeper.yaml" ]
+    ports:
+      - 3000:3000
+    volumes:
+      - type: bind
+        source: ./gatekeeper.yaml
+        target: /opt/config/gatekeeper.yaml
+        volume:
+          nocopy: true
+
+  app:
+    image: containous/whoami
+    ports:
+      - 32769:80
+
+  gateway:
+    image: nginx:1.15.1
+    ports:
+      - 82:80
+    volumes:
+      - type: bind
+        source: ./src/main/web/frontend
+        target: /usr/share/nginx/html
+        volume:
+          nocopy: true
+      - type: bind
+        source: ./default.conf
+        target: /etc/nginx/conf.d/default.conf
+        volume:
+          nocopy: true

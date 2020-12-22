@@ -1,0 +1,28 @@
+# is the url for retrieve the openid configuration - normally the <server>/auth/realm/<realm_name>
+discovery-url: http://keycloak:8080/auth/realms/jaeger
+# the redirection url, essentially the site url, note: /oauth/callback is added at the end
+#redirection-url: http://foo:8280
+#redirection_url: http://keycloak:8080
+# the client id for the 'client' application
+client-id: proxy-jaeger
+# the secret associated to the 'client' application - note the client_secret is optional, required for
+# oauth2 access_type=confidential i.e. the client is being verified
+client-secret: d78ae9fe-f291-4e9d-b45d-65906c702896
+# the interface definition you wish the proxy to listen, all interfaces is specified as ':<port>'
+listen: :3000
+# the upstream endpoint which we should proxy request
+upstream-url: http://gateway:80
+
+no-redirects: false
+secure-cookie: false
+
+# a collection of resource i.e. urls that you wish to protect
+resources:
+  - uri: /demo/api/protected
+    # the methods on this url that should be protected, if missing, we assuming all
+    methods:
+      - GET
+    # a list of roles the user must have in order to accces urls under the above
+    roles:
+      - user
+      - admin

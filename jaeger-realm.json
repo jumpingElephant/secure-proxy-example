@@ -1,0 +1,63 @@
+{
+  "realm": "jaeger",
+  "enabled": true,
+  "registrationAllowed": true,
+  "users": [
+    {
+      "username": "keycloak",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "test"
+        }
+      ],
+      "realmRoles": [
+        "user"
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "User privileges"
+      },
+      {
+        "name": "admin",
+        "description": "Administrator privileges"
+      }
+    ]
+  },
+  "defaultRoles": [
+    "user"
+  ],
+  "clients": [
+    {
+      "clientId": "app",
+      "enabled": true,
+      "publicClient": true,
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ]
+    },
+    {
+      "clientId": "proxy-jaeger",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-x509",
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "attributes": {
+        "x509.subjectdn": "CN=demo-mutual-tls-keycloak.*"
+      }
+    }
+  ]
+}
